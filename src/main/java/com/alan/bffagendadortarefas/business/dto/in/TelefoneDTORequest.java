@@ -1,4 +1,4 @@
-package com.alan.bffagendadortarefas.business.dto;
+package com.alan.bffagendadortarefas.business.dto.in;
 
 import lombok.*;
 
@@ -8,9 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 
-public class TelefoneDTO {
+public class TelefoneDTORequest {
 
-    private Long id;
     private String numero;
     private String ddd;
 }
