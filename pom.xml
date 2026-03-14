@@ -48,7 +48,9 @@
 
 		<dependency>
 			<groupId>io.github.openfeign</groupId>
-			<artifactId>feign-okhttp</artifactId>
+			<artifactId>feign-hc5</artifactId>
+			<version>13.9.3</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
