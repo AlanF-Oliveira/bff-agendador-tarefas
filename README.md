@@ -248,13 +248,6 @@ O fluxo de autenticação da plataforma é:
 
 ---
 
-## 🧪 Testes
-
-```bash
-./mvnw test
-```
-
----
 
 ## 👤 Autor
 
