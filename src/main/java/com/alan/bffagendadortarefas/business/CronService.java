@@ -34,13 +34,6 @@ public class CronService {
         log.info("Iniciada a busca de tarefas");
         LocalDateTime horaAtual = LocalDateTime.now();
         LocalDateTime horaFutura = LocalDateTime.now().plusHours(1);
-//        LocalDateTime inicioMes = horaAtual.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-//        LocalDateTime fimMes = horaAtual.plusMonths(1).withDayOfMonth(1)
-//                .withHour(0)
-//                .withMinute(0)
-//                .withSecond(0)
-//                .withNano(0)
-//                .minusSeconds(1);
         List<TarefasDTOResponse> listaTarefas = tarefasService.buscaTarefasAgendadasPorPeriodo(horaAtual, horaFutura, token);
         log.info("Tarefa encontada: " + listaTarefas);
         listaTarefas.forEach(tarefa -> {
