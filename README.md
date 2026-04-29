@@ -1,65 +1,64 @@
-# 🔀 BFF Agendador de Tarefas
+# BFF Agendador de Tarefas
 
 Serviço **BFF (Backend for Frontend)** que atua como ponto de entrada único para o ecossistema de microsserviços de agendamento de tarefas. Ele orquestra as chamadas entre o frontend e os três microsserviços do sistema: **usuario**, **agendador-tarefas** e **notificacao**.
 
 ---
 
-## 🏗️ Arquitetura do Sistema
+## Arquitetura do Sistema
 
 ```
-                        ┌─────────────────────────────┐
-                        │       Frontend / Cliente     │
-                        └──────────────┬──────────────┘
-                                       │
-                                       ▼
-                        ┌─────────────────────────────┐
-                        │   BFF Agendador de Tarefas   │
-                        │   (Spring Boot + OpenFeign)  │
-                        └──────┬──────────┬────────────┘
-                               │          │          │
-               ┌───────────────┘          │          └──────────────────┐
-               ▼                          ▼                             ▼
-  ┌────────────────────┐   ┌──────────────────────┐   ┌────────────────────────┐
-  │      usuario       │   │  agendador-tarefas   │   │      notificacao       │
-  │  Spring Boot + JPA │   │  Spring Boot + Mongo │   │   Spring Boot + Email  │
-  │     PostgreSQL     │   │       MongoDB        │   │     Java/HTML          │
-  └────────────────────┘   └──────────────────────┘   └────────────────────────┘
+                    ┌─────────────────────────────┐
+                    │       Frontend / Cliente     │
+                    └──────────────┬──────────────┘
+                                   │
+                                   ▼
+                    ┌─────────────────────────────┐
+                    │   BFF Agendador de Tarefas   │
+                    │   (Spring Boot + OpenFeign)  │
+                    └──────┬───────────┬───────────┘
+                           │           │           │
+           ┌───────────────┘           │           └──────────────────┐
+           ▼                           ▼                              ▼
+┌────────────────────┐  ┌──────────────────────┐  ┌────────────────────────┐
+│      usuario       │  │  agendador-tarefas   │  │      notificacao       │
+│  Spring Boot + JPA │  │  Spring Boot + Mongo │  │   Spring Boot + Email  │
+│     PostgreSQL     │  │       MongoDB        │  │     Java / HTML        │
+└────────────────────┘  └──────────────────────┘  └────────────────────────┘
 ```
 
-O BFF recebe todas as requisições do frontend, repassa para os microsserviços corretos via **OpenFeign**, e retorna as respostas consolidadas. Nenhum microsserviço é exposto diretamente ao frontend.
+O BFF recebe todas as requisições do frontend, repassa para os microsserviços corretos via OpenFeign e retorna as respostas consolidadas. Nenhum microsserviço é exposto diretamente ao frontend.
 
 ---
 
-## 🚀 Tecnologias
+## Tecnologias
 
-| Tecnologia | Versão | Uso |
-|---|---|---|
-| Java | 17 | Linguagem principal |
-| Spring Boot | 4.0.3 | Framework base |
-| Spring Cloud OpenFeign | 2025.1.0 | Comunicação com microsserviços |
-| Feign HC5 | 13.9.3 | Cliente HTTP de alta performance |
-| SpringDoc OpenAPI | 3.0.2 | Documentação Swagger |
-| Lombok | — | Redução de boilerplate |
-| Maven | Wrapper incluso | Build |
-| Docker | — | Containerização |
-| Docker Compose | 3.8 | Orquestração local dos serviços |
+| Tecnologia | Versão |
+|---|---|
+| Java | 17 |
+| Spring Boot | 4.0.3 |
+| Spring Cloud (OpenFeign) | 2025.1.0 |
+| Feign HC5 | 13.9.3 |
+| Springdoc OpenAPI | 3.0.2 |
+| Lombok | 1.18.32 |
+| Docker / Docker Compose | — |
 
 ---
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 bff-agendador-tarefas/
 ├── .github/
-│   └── workflows/              # Pipelines CI/CD
+│   └── workflows/
+│       └── maven.yml
 ├── src/
 │   └── main/
 │       └── java/com/alan/bff_agendador_tarefas/
 │           ├── BffAgendadorTarefasApplication.java
-│           ├── controller/     # Endpoints REST expostos ao frontend
-│           ├── business/       # Lógica de orquestração e DTOs
+│           ├── controller/
+│           ├── business/
 │           └── infrastructure/
-│               └── client/     # Feign Clients para cada microsserviço
+│               └── client/
 ├── Dockerfile
 ├── docker-compose.yml
 └── pom.xml
@@ -67,14 +66,12 @@ bff-agendador-tarefas/
 
 ---
 
-## 🐳 Executando com Docker (recomendado)
-
-O `docker-compose.yml` sobe todo o ecossistema de uma vez: BFF, os 3 microsserviços, PostgreSQL e MongoDB.
+## Como Rodar o Projeto
 
 ### Pré-requisitos
 
-- [Docker](https://www.docker.com/) instalado
-- Os repositórios clonados lado a lado na mesma pasta:
+- Docker Desktop instalado e em execução
+- Todos os repositórios clonados **lado a lado** na mesma pasta:
 
 ```
 /projetos
@@ -84,14 +81,27 @@ O `docker-compose.yml` sobe todo o ecossistema de uma vez: BFF, os 3 microsservi
 └── notificacao/
 ```
 
-### Subindo tudo
+### Subindo com Docker Compose
 
 ```bash
 cd bff-agendador-tarefas
-docker-compose up --build
+docker compose up --build
 ```
 
-### Serviços e portas
+> Use `--build` na primeira execução ou sempre que houver alterações no código.
+> Nas execuções seguintes, basta:
+
+```bash
+docker compose up
+```
+
+Para derrubar os containers:
+
+```bash
+docker compose down
+```
+
+### Serviços e Portas
 
 | Serviço | Porta | Descrição |
 |---|---|---|
@@ -99,10 +109,12 @@ docker-compose up --build
 | `usuario` | `8080` | Microsserviço de usuários |
 | `agendador-tarefas` | `8081` | Microsserviço de tarefas |
 | `notificacao` | `8082` | Microsserviço de notificações |
-| `postgres` | `5433` | Banco de dados do serviço usuario |
-| `mongo` | `27017` | Banco de dados do serviço agendador-tarefas |
+| `postgres` | `5433` | Banco PostgreSQL do serviço `usuario` |
+| `mongo` | `27017` | Banco MongoDB do serviço `agendador-tarefas` |
 
-### Variáveis de ambiente configuradas automaticamente
+### Variáveis de Ambiente
+
+Configuradas automaticamente pelo `docker-compose.yml`:
 
 | Variável | Valor |
 |---|---|
@@ -114,26 +126,20 @@ docker-compose up --build
 | `SPRING_DATASOURCE_USERNAME` | `admin` |
 | `SPRING_DATASOURCE_PASSWORD` | `admin` |
 
-### Derrubando os containers
-
-```bash
-docker-compose down
-```
-
 ---
 
-## ▶️ Executando sem Docker
+## Executando Sem Docker
 
 ### Pré-requisitos
 
 - Java 17+
 - MongoDB rodando localmente
 - PostgreSQL rodando localmente
-- Os microsserviços **usuario**, **agendador-tarefas** e **notificacao** rodando
+- Microsserviços **usuario**, **agendador-tarefas** e **notificacao** em execução
 
 ### Configuração
 
-Edite o `src/main/resources/application.properties`:
+Edite o arquivo `src/main/resources/application.properties`:
 
 ```properties
 usuario.url=http://localhost:8080
@@ -151,28 +157,7 @@ cd bff-agendador-tarefas
 
 ---
 
-## 🔧 Dockerfile
-
-O BFF utiliza um build multi-stage para manter a imagem final enxuta:
-
-```dockerfile
-# Stage 1 — build
-FROM maven:3.8-openjdk-17 AS build
-WORKDIR /app
-COPY . .
-RUN mvn clean install -DskipTests
-
-# Stage 2 — runtime
-FROM eclipse-temurin:17-jdk
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8083
-CMD ["java", "-jar", "/app/app.jar"]
-```
-
----
-
-## 📖 Documentação da API (Swagger)
+## Documentação da API (Swagger)
 
 Com a aplicação rodando, acesse:
 
@@ -182,14 +167,28 @@ http://localhost:8083/swagger-ui.html
 
 ---
 
-## 🧩 Microsserviços Conectados
+## Autenticação
 
-### 👤 [usuario](https://github.com/AlanF-Oliveira/usuario)
+O fluxo de autenticação da plataforma segue os seguintes passos:
 
-Responsável pelo cadastro, autenticação e gerenciamento de usuários. Emite o token **JWT** utilizado em toda a plataforma.
+```
+1. Frontend chama  POST /usuario/login  via BFF
+2. BFF repassa a requisição para o microsserviço usuario
+3. usuario valida as credenciais e retorna um token JWT
+4. Frontend armazena o token e o envia em todas as requisições seguintes:
+   Authorization: Bearer <token>
+5. BFF propaga o token para os microsserviços que precisam validá-lo
+```
 
-- **Stack:** Spring Boot 4 · Spring Data JPA · PostgreSQL · Spring Security · JWT · BCrypt · Gradle
-- **Principais endpoints consumidos pelo BFF:**
+---
+
+## Microsserviços Conectados
+
+### [usuario](https://github.com/AlanF-Oliveira/usuario)
+
+Responsável pelo cadastro, autenticação e gerenciamento de usuários. Emite o token JWT utilizado em toda a plataforma.
+
+**Stack:** Spring Boot 4 · Spring Data JPA · PostgreSQL · Spring Security · JWT · BCrypt · Gradle
 
 | Método | Endpoint | Descrição |
 |---|---|---|
@@ -205,12 +204,11 @@ Responsável pelo cadastro, autenticação e gerenciamento de usuários. Emite o
 
 ---
 
-### 📋 [agendador-tarefas](https://github.com/AlanF-Oliveira/agendador-tarefas)
+### [agendador-tarefas](https://github.com/AlanF-Oliveira/agendador-tarefas)
 
-Responsável pelo gerenciamento e agendamento de tarefas dos usuários. Autentica via JWT e persiste as tarefas no MongoDB.
+Responsável pelo gerenciamento e agendamento de tarefas dos usuários. Autentica via JWT e persiste os dados no MongoDB.
 
-- **Stack:** Spring Boot 4 · Spring Data MongoDB · Spring Security · JWT · OpenFeign · MapStruct · Gradle
-- **Principais endpoints consumidos pelo BFF:**
+**Stack:** Spring Boot 4 · Spring Data MongoDB · Spring Security · JWT · OpenFeign · MapStruct · Gradle
 
 | Método | Endpoint | Descrição |
 |---|---|---|
@@ -225,30 +223,25 @@ Responsável pelo gerenciamento e agendamento de tarefas dos usuários. Autentic
 
 ---
 
-### 🔔 [notificacao](https://github.com/AlanF-Oliveira/notificacao)
+### [notificacao](https://github.com/AlanF-Oliveira/notificacao)
 
-Responsável pelo envio de notificações aos usuários sobre suas tarefas agendadas. Possui templates HTML para os e-mails disparados.
+Responsável pelo envio de notificações por e-mail sobre tarefas agendadas. Utiliza templates HTML para a formatação dos e-mails.
 
-- **Stack:** Spring Boot · Gradle · Java · HTML (templates de e-mail)
-
----
-
-## 🔐 Autenticação
-
-O fluxo de autenticação da plataforma é:
-
-```
-1. Frontend chama  POST /usuario/login  via BFF
-2. BFF repassa para o microsserviço usuario
-3. usuario valida as credenciais e retorna um token JWT
-4. Frontend armazena o token e envia em todas as próximas requisições:
-   Authorization: Bearer <token>
-5. BFF propaga o token para os microsserviços que precisam validá-lo
-```
+**Stack:** Spring Boot · Gradle · Java · HTML (templates de e-mail)
 
 ---
 
+## CI/CD
 
-## 👤 Autor
+O projeto utiliza **GitHub Actions** para integração contínua. O pipeline é acionado automaticamente em:
 
-**Alan F. Oliveira** — [github.com/AlanF-Oliveira](https://github.com/AlanF-Oliveira)
+- Pull Requests abertos, sincronizados ou reabertos para a branch `main`
+
+**Etapas do pipeline:**
+
+1. Checkout do código
+2. Configuração do JDK 17 (Temurin)
+3. Cache das dependências Maven
+4. Build com Maven (`mvn -B package`)
+
+O arquivo de configuração está em `.github/workflows/maven.yml`.
