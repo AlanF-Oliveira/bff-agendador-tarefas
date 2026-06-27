@@ -6,17 +6,19 @@ services:
       - "8081:8081"
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/db_agendador
+      - USUARIO_URL=http://usuario:8080
     depends_on:
       - mongo
+      - usuario
   bff-agendador-tarefas:
     build: .
     container_name: bff-agendador-tarefas
     ports:
       - "8083:8083"
     environment:
-      - USUARIO_URL=usuario:8080/usuario
-      - AGENDADOR_TAREFAS_URL=agendador-tarefas:8081/tarefas
-      - NOTIFICACAO_URL=notificacao:8082/email
+      - USUARIO_URL=http://usuario:8080/usuario
+      - AGENDADOR_TAREFAS_URL=http://agendador-tarefas:8081/tarefas
+      - NOTIFICACAO_URL=http://notificacao:8082/email
   usuario:
     build: ../usuario
     container_name: usuario
