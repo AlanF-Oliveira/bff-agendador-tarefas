@@ -1,9 +1,7 @@
-version: "3.8"
-
 services:
-  agendador_tarefas:
-    build: ..\agendador_tarefas
-    container_name: agendador_tarefas
+  agendador-tarefas:
+    build: ../agendador-tarefas
+    container_name: agendador-tarefas
     ports:
       - "8081:8081"
     environment:
@@ -17,10 +15,10 @@ services:
       - "8083:8083"
     environment:
       - USUARIO_URL=usuario:8080/usuario
-      - AGENDADOR_TAREFAS_URL=agendador_tarefas:8081/tarefas
+      - AGENDADOR_TAREFAS_URL=agendador-tarefas:8081/tarefas
       - NOTIFICACAO_URL=notificacao:8082/email
   usuario:
-    build: ..\usuario
+    build: ../usuario
     container_name: usuario
     ports:
       - "8080:8080"
@@ -31,7 +29,7 @@ services:
     depends_on:
       - postgres
   notificacao:
-    build: ..\notificacao
+    build: ../notificacao
     container_name: notificacao
     ports:
       - "8082:8082"
@@ -46,7 +44,7 @@ services:
     ports:
       - "5433:5432"
   mongo:
-    image: mongo:latest
+    image: mongo:6.0
     container_name: mongo
     restart: no
     ports:
